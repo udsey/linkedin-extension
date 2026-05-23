@@ -9,5 +9,4 @@
   }
 ],
   "background": { "scripts": ["background.js"] },
-  "permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*"]
-}
+"permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*", "*://*/*"]}

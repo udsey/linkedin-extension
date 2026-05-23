@@ -18,13 +18,14 @@ function  parseRelativeTime(text) {
 }
 
 function parseJobInfo(text) {
-    const match = text.match(/([\w\s]+) · ([\w\s]+) \(([\w\s]+)\)/);
+    const match = text.match(/(.+?) · (.+?) \((.+?)\)/);
     if (!match) return null;
 
     return { company: match[1].trim(), location: match[2].trim() };
 }
 
 async function goToNextPage() {
+    console.log("next");
   const next = document.querySelector(
     "[data-testid='pagination-controls-next-button-visible']"
   );
@@ -35,21 +36,24 @@ async function goToNextPage() {
 }
 
 
-function extractJobs(lastSync) {
+
+function extractJobs() {
     const containers = [...document.querySelectorAll("*")].filter(
         el => el.children.length === 2
-        );
+    );
 
     const listContainer = containers.find(el => {
         const headers = el.children[0];
-        return [...headers.querySelectorAll("p")]
-            .some(p => p.textContent.trim() === "Jobs");
+        return [...headers.children]
+            .some(el => el.querySelector("p")?.textContent.trim() === "Jobs");
     });
 
-    if (!listContainer) return { jobs: [], done: false };
+    if (!listContainer) return [];
     console.log("listContainer found:", listContainer);
-    const jobList = listContainer.children[1];
+
+    const jobList = listContainer.children[0].children[1].children[1];
     const jobs = [];
+    console.log("jobList found:", jobList);
 
     for (const jobEl of jobList.children) {
         if (jobEl.children.length < 2) continue;
@@ -58,6 +62,8 @@ function extractJobs(lastSync) {
         const link = target.querySelector("a")
         if (!link) continue;
 
+        console.log("job found:", jobEl.children[1]);
+
         const href = link.href;
         const parts = href.split("/").filter(Boolean)
         const job_id = parts[parts.length - 1];
@@ -65,33 +71,26 @@ function extractJobs(lastSync) {
         const job_title = paragraphs[0]?.textContent.trim();
         const companyLocation = paragraphs[1]?.textContent.trim();
         const { company, location } = parseJobInfo(companyLocation) ?? {};
-        const appliedPostedElement = target.querySelectorAll("div");
-        const applied_at = parseRelativeTime(appliedPostedElement[0]?.textContent);
-        const posted_time = parseRelativeTime(appliedPostedElement[1]?.textContent);
+        const applied_at = parseRelativeTime(paragraphs[2]?.textContent);
+        const posted_time = parseRelativeTime(paragraphs[3]?.textContent);
         const created_at = new Date().toISOString()
-
-        if (lastSync && applied_at < lastSync) return { jobs, done: true };
-
-        jobs.push({job_title, company, job_url: href, created_at, applied_at, posted_time});
+        jobs.push({job_id, job_title, company, job_url: href, created_at, applied_at, posted_time});
     }
-    return { jobs, done: false };
+    return jobs;
 }
 
 
-async function syncAllJobs(lastSync) {
+async function syncAllJobs() {
   const jobs = [];
-
   while (true) {
-    const { jobs: newJobs, done } = extractJobs(lastSync);
-    console.log("extracted jobs:", jobs);
+    const newJobs = extractJobs();
     jobs.push(...newJobs);
-    if (done) break;
+    if (newJobs.length === 0) break;
     const hasNext = await goToNextPage();
     if (!hasNext) break;
   }
   return jobs;
 }
-
 
 async function getLastSync() {
   const response = await fetch("http://localhost:8050/api/last-sync");
@@ -101,15 +100,22 @@ async function getLastSync() {
 
 (async () => {
   console.log("sync_applied.js loaded");
-  const lastSync = await getLastSync();
-  console.log("Last sync:", lastSync);
-  const jobs = await syncAllJobs(lastSync);
+  try {
+    const lastSync = await getLastSync();
+    console.log("Last sync:", lastSync);
+  } catch (e) {
+    console.error("getLastSync failed:", e);
+  }
+  await new Promise(r => setTimeout(r, 3000));
+  const jobs = await syncAllJobs();
   if (jobs.length) {
     console.log("sending jobs to API:", jobs.length);
-    await fetch("http://localhost:8050/api/sync-jobs", {
+    const response = await fetch("http://localhost:8050/api/sync-jobs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(jobs)
     });
+    const text = await response.text();
+    console.log("API raw response:", text);
   }
 })();
