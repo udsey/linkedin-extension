@@ -1,1 +1,1 @@
-# linkedin-extention
+# linkedin-extension
