@@ -47,7 +47,7 @@ function extractJobs(lastSync) {
     });
 
     if (!listContainer) return { jobs: [], done: false };
-
+    console.log("listContainer found:", listContainer);
     const jobList = listContainer.children[1];
     const jobs = [];
 
@@ -83,6 +83,7 @@ async function syncAllJobs(lastSync) {
 
   while (true) {
     const { jobs: newJobs, done } = extractJobs(lastSync);
+    console.log("extracted jobs:", jobs);
     jobs.push(...newJobs);
     if (done) break;
     const hasNext = await goToNextPage();
@@ -99,9 +100,12 @@ async function getLastSync() {
 }
 
 (async () => {
+  console.log("sync_applied.js loaded");
   const lastSync = await getLastSync();
+  console.log("Last sync:", lastSync);
   const jobs = await syncAllJobs(lastSync);
   if (jobs.length) {
+    console.log("sending jobs to API:", jobs.length);
     await fetch("http://localhost:8050/api/sync-jobs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
