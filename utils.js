@@ -53,6 +53,7 @@ export function waitForElement(selector, timeout = 10000) {
 
 
 export function onUrlChange(callback) {
+    let lastUrl = location.href;
     window.addEventListener("popstate", callback);
     setInterval(() => {
         if (location.href != lastUrl) {

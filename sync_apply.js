@@ -1,7 +1,5 @@
 import { parseRelativeTime, postJobs, waitForElement, onUrlChange } from "./utils";
 
-let lastUrl = location.href
-
 function parseJob() {
     var job = {};
     var current_url = window.location.href;
