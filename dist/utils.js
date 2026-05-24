@@ -68,4 +68,25 @@
     const data = await response.json();
     return data.last_sync;
   }
+  function makeMovable(el, handleId) {
+    let isDragging = false, startX, startY, origX, origY;
+    el.querySelector(`#${handleId}`).addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      origX = el.offsetLeft;
+      origY = el.offsetTop;
+      el.style.cursor = "grabbing";
+    });
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      el.style.left = origX + (e.clientX - startX) + "px";
+      el.style.top = origY + (e.clientY - startY) + "px";
+      el.style.right = "auto";
+    });
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      el.style.cursor = "default";
+    });
+  }
 })();

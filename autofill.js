@@ -1,34 +1,10 @@
+import { makeMovable } from "./utils";
+
 browser.runtime.onMessage.addListener((message) => {
   if (message.action === "autofill") {
     showDialog(message.selection);
   }
 });
-
-
-function makeMovable(el) {
-  let isDragging = false, startX, startY, origX, origY;
-
-  el.querySelector("#autofill-handle").addEventListener("mousedown", (e) => {
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    origX = el.offsetLeft;
-    origY = el.offsetTop;
-    el.style.cursor = "grabbing";
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    el.style.left = origX + (e.clientX - startX) + "px";
-    el.style.top = origY + (e.clientY - startY) + "px";
-    el.style.right = "auto";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    el.style.cursor = "default";
-  });
-}
 
 
 function showDialog(selection) {
@@ -92,7 +68,7 @@ handle.style.cssText = `
     border-radius: 0.375rem;
     font-size: 14px;
   `;
-  result.textContent = "Loading...";
+  result.textContent = "Loading..."; // TODO: POST to API
 
   const button = document.createElement("button");
 button.id = "autofill-close";
@@ -117,6 +93,6 @@ dialog.appendChild(target);
 dialog.appendChild(result);
 
 
-  makeMovable(dialog);
+  makeMovable(dialog, "autofill-handle");
   document.body.appendChild(dialog);
 }

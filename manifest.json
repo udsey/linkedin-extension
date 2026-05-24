@@ -26,7 +26,7 @@
     },
     {
       "matches": ["<all_urls>"],
-      "js": ["dist/autofill.js"]
+      "js": ["dist/autofill.js", "dist/remember.js"]
     }
   ],
   "background": { "scripts": ["dist/background.js"] },

@@ -1,13 +1,8 @@
 (() => {
-  // autofill.js
-  browser.runtime.onMessage.addListener((message) => {
-    if (message.action === "autofill") {
-      showDialog(message.selection);
-    }
-  });
-  function makeMovable(el) {
+  // utils.js
+  function makeMovable(el, handleId) {
     let isDragging = false, startX, startY, origX, origY;
-    el.querySelector("#autofill-handle").addEventListener("mousedown", (e) => {
+    el.querySelector(`#${handleId}`).addEventListener("mousedown", (e) => {
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -26,6 +21,13 @@
       el.style.cursor = "default";
     });
   }
+
+  // autofill.js
+  browser.runtime.onMessage.addListener((message) => {
+    if (message.action === "autofill") {
+      showDialog(message.selection);
+    }
+  });
   function showDialog(selection) {
     document.getElementById("autofill-dialog")?.remove();
     const dialog = document.createElement("div");
@@ -99,7 +101,7 @@
     dialog.appendChild(header);
     dialog.appendChild(target);
     dialog.appendChild(result);
-    makeMovable(dialog);
+    makeMovable(dialog, "autofill-handle");
     document.body.appendChild(dialog);
   }
 })();
