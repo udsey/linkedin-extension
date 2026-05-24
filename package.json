@@ -1,0 +1,23 @@
+{
+  "name": "linkedin-extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "background.js",
+"scripts": {
+    "build": "esbuild sync_apply.js match_job.js sync_applied.js background.js --bundle --outdir=dist"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/udsey/linkedin-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/udsey/linkedin-extension/issues"
+  },
+  "homepage": "https://github.com/udsey/linkedin-extension#readme",
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

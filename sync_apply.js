@@ -30,7 +30,7 @@ function isJobPage() {
             const job = parseJob();
             btn.addEventListener("click", () => {
                 job.created_at = job.applied_at = new Date().toISOString();
-                postJobs(job);
+                postJobs([job]);
             });
         } catch (e) {
             console.warn("Apply button not found", e.message);

@@ -2,19 +2,20 @@
   "manifest_version": 2,
   "name": "Job Tracker",
   "version": "1.0",
-"content_scripts": [
-  {
-    "matches": ["https://www.linkedin.com/jobs-tracker/*"],
-    "js": ["sync_applied.js"]
-  },
-  {
-    "matches": [
-      "https://www.linkedin.com/jobs/search/*",
-      "https://www.linkedin.com/jobs/collections/recommended/*",
-      "https://www.linkedin.com/jobs/view/*"
-    ],
-    "js": ["sync_apply.js", "match_job.js"]
-  }
-],
-  "background": { "scripts": ["background.js"] },
-"permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*", "*://*/*"]}
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/jobs-tracker/*"],
+      "js": ["dist/sync_applied.js"]
+    },
+    {
+      "matches": [
+        "https://www.linkedin.com/jobs/search/*",
+        "https://www.linkedin.com/jobs/collections/recommended/*",
+        "https://www.linkedin.com/jobs/view/*"
+      ],
+      "js": ["dist/sync_apply.js", "dist/match_job.js"]
+    }
+  ],
+  "background": { "scripts": ["dist/background.js"] },
+  "permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*", "*://*/*"]
+}

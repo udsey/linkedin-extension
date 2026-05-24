@@ -20,25 +20,48 @@ function renderPanel(content) {
 
     const panel = document.createElement("div");
     panel.id = "job-match-panel";
+    panel.style.cssText = `
+        border:1px solid  #0a66c2;
+        border-radius:0.9rem;
+        padding:16px 24px;
+        margin:16px 0;`;
+
     if (content.error) {
-        panel.innerHTML = `<p>❌ Error: ${content.error}</p>`;
+        panel.innerHTML = `<p>🚫 Error: ${content.error}</p>`;
         document.querySelector("#job-details").prepend(panel);
         return;
     }
     panel.innerHTML = `
-        <h3>Match Score: ${content.relevance_score}%</h3>
-        <p>📋 ${content.job_summary}</p>
-        <p>✅ <b>Matching:</b> ${content.matching_skills.join(", ")}</p>
-        <p>❌ <b>Missing:</b> ${content.missing_requirements.join(", ")}</p>
+        <h3 style="margin-bottom:0.8rem">Match Score: ${content.relevance_score}%</h3>
+        <p style="margin-bottom:0.8rem">📋 ${content.job_summary}</p>
+        <p style="margin-bottom:0.8rem">✅ <b>Matching:</b> ${content.matching_skills.join(", ")}</p>
+        <p style="margin-bottom:0.8rem">🚫 <b>Missing:</b> ${content.missing_requirements.join(", ")}</p>
     `;
     document.querySelector("#job-details").prepend(panel);
 }
 
 
 async function init() {
+    const existing = document.querySelector("#job-match-panel");
+    if (existing) existing.remove();
+    const existingBtn = document.querySelector("#job-match-btn");
+    if (existingBtn) existingBtn.remove();
     const btn = await waitForElement("#jobs-apply-button-id");
     const matchBtn = document.createElement("button");
+    matchBtn.id = "job-match-btn";
     matchBtn.textContent = "Check Match";
+    matchBtn.style.cssText = `
+        font-weight:600;
+        border:1px solid #0a66c2;
+        background:transparent;
+        height: 4rem;
+        border-radius:99.9rem;
+        margin-left: 5px;
+        margin-right: 0;
+        padding:6px 16px;
+        cursor:pointer;
+        color:#0a66c2;
+        font-size:1.6rem;`;
 
     async function showMatch() {
         matchBtn.disabled = true;
