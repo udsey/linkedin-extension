@@ -18,8 +18,8 @@ export function  parseRelativeTime(text) {
 }
 
 
-export function postJobs(jobs) {
-    response = await fetch("http://localhost:8050/api/sync-jobs", {
+export async function postJobs(jobs) {
+    const response = await fetch("http://localhost:8050/api/sync-jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(jobs)
@@ -27,4 +27,37 @@ export function postJobs(jobs) {
     const text = await response.text();
     console.log(`API raw response: ${text}`);
 
+}
+
+
+
+export function waitForElement(selector, timeout = 10000) {
+    return new Promise((resolve, reject) => {
+        const el = document.querySelector(selector);
+        if (el) return resolve(el);
+
+        const observer = new MutationObserver(() => {
+            const el = document.querySelector(selector);
+            if (el) {
+                observer.disconnect();
+                resolve(el);
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(() => {
+            observer.disconnect();
+            reject(new Error(`Timeout waiting for ${selector}`));
+        }, timeout);
+    });
+}
+
+
+export function onUrlChange(callback) {
+    window.addEventListener("popstate", callback);
+    setInterval(() => {
+        if (location.href != lastUrl) {
+            lastUrl = location.href;
+            callback();
+        }
+    }, 500)
 }

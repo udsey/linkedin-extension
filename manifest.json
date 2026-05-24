@@ -6,6 +6,22 @@
   {
     "matches": ["https://www.linkedin.com/jobs-tracker/*"],
     "js": ["sync_applied.js"]
+  },
+  {
+    "matches": [
+      "https://www.linkedin.com/jobs/search/*",
+      "https://www.linkedin.com/jobs/collections/recommended/*",
+      "https://www.linkedin.com/jobs/view/*"
+    ],
+    "js": ["sync_apply.js"]
+  },
+  {
+    "matches": [
+        "https://www.linkedin.com/jobs/search/*",
+        "https://www.linkedin.com/jobs/collections/recommended/*",
+        "https://www.linkedin.com/jobs/view/*"
+    ],
+    "js": ["match_job.js"]
   }
 ],
   "background": { "scripts": ["background.js"] },

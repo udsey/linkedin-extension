@@ -1,22 +1,64 @@
-async function getMatch(job) {
+import { waitForElement, onUrlChange} from "./utils";
+
+async function getMatch(description) {
     const response = await fetch("http://localhost:8050/api/match-job", {
-        method: "GET",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(job)
+        body: JSON.stringify(description)
     });
     const text = await response.text();
-    console.log(`API raw response: ${text}`);
-
     if (response.status !== 200) {
         throw new Error(`API returned status ${response.status}: ${text}`);
     }
-
     return JSON.parse(text);
-};
+}
 
 
-function showMatch() {
-    const job = document.querySelector("#job-details").textContent.trim();
-    const content = getMatch(job);
-    // Show content: "job_summary", "relevance_score","matching_skills", "missing_requirements"
-};
+function renderPanel(content) {
+    const existing = document.querySelector("#job-match-panel");
+    if (existing) existing.remove();
+
+    const panel = document.createElement("div");
+    panel.id = "job-match-panel";
+    if (content.error) {
+        panel.innerHTML = `<p>❌ Error: ${content.error}</p>`;
+        document.querySelector("#job-details").prepend(panel);
+        return;
+    }
+    panel.innerHTML = `
+        <h3>Match Score: ${content.relevance_score}%</h3>
+        <p>📋 ${content.job_summary}</p>
+        <p>✅ <b>Matching:</b> ${content.matching_skills.join(", ")}</p>
+        <p>❌ <b>Missing:</b> ${content.missing_requirements.join(", ")}</p>
+    `;
+    document.querySelector("#job-details").prepend(panel);
+}
+
+
+async function init() {
+    const btn = await waitForElement("#jobs-apply-button-id");
+    const matchBtn = document.createElement("button");
+    matchBtn.textContent = "Check Match";
+
+    async function showMatch() {
+        matchBtn.disabled = true;
+        matchBtn.textContent = "Checking...";
+        try {
+            const description = document.querySelector("#job-details").textContent.trim();
+            const content = await getMatch(description);
+            renderPanel(content);
+        } catch (e) {
+            renderPanel({ error: e.message });
+        } finally {
+            matchBtn.disabled = false;
+            matchBtn.textContent = "Check Match";
+        }
+    }
+
+    matchBtn.addEventListener("click", showMatch);
+    btn.parentElement.appendChild(matchBtn);
+}
+
+
+onUrlChange(init);
+init();
