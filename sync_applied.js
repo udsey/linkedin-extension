@@ -1,21 +1,5 @@
-function  parseRelativeTime(text) {
-    const now = new Date();
-    if (text.match("just now")) return now.toISOString().split("T")[0]; // YYYY-MM-DD
-    const match = text.match(/(\d+)\s*(m|h|d|mo|w|yr)/);
-    if (!match) return null;
+import { parseRelativeTime, postJobs } from "./utils";
 
-    const value = parseInt(match[1]);
-    const unit = match[2];
-
-    switch (unit) {
-        case "h": now.setHours(now.getHours() - value); break;
-        case "d": now.setDate(now.getDate() - value); break;
-        case "w": now.setDate(now.getDate() - value * 7); break;
-        case "mo": now.setMonth(now.getMonth() - value); break;
-        case "yr": now.setFullYear(now.getFullYear() - value); break;
-    }
-    return now.toISOString().split("T")[0]; // YYYY-MM-DD
-}
 
 function parseJobInfo(text) {
     const match = text.match(/(.+?) · (.+?) \((.+?)\)/);
@@ -24,8 +8,8 @@ function parseJobInfo(text) {
     return { company: match[1].trim(), location: match[2].trim() };
 }
 
+
 async function goToNextPage() {
-    console.log("next");
   const next = document.querySelector(
     "[data-testid='pagination-controls-next-button-visible']"
   );
@@ -34,7 +18,6 @@ async function goToNextPage() {
   await new Promise(r => setTimeout(r, 2000)); // wait for page load
   return true;
 }
-
 
 
 function extractJobs() {
@@ -62,8 +45,6 @@ function extractJobs() {
         const link = target.querySelector("a")
         if (!link) continue;
 
-        console.log("job found:", jobEl.children[1]);
-
         const href = link.href;
         const parts = href.split("/").filter(Boolean)
         const job_id = parts[parts.length - 1];
@@ -82,21 +63,28 @@ function extractJobs() {
 
 async function syncAllJobs() {
   const jobs = [];
+  const maxPages = 15;
+  let currentPage = 0;
+
   while (true) {
     const newJobs = extractJobs();
     jobs.push(...newJobs);
     if (newJobs.length === 0) break;
+    currentPage++;
+    if (currentPage >= maxPages) break;
     const hasNext = await goToNextPage();
     if (!hasNext) break;
   }
   return jobs;
 }
 
+
 async function getLastSync() {
   const response = await fetch("http://localhost:8050/api/last-sync");
   const data = await response.json();
   return data.last_sync; // expects {"last_sync": "2026-05-22"}
 }
+
 
 (async () => {
   console.log("sync_applied.js loaded");
@@ -108,14 +96,5 @@ async function getLastSync() {
   }
   await new Promise(r => setTimeout(r, 3000));
   const jobs = await syncAllJobs();
-  if (jobs.length) {
-    console.log("sending jobs to API:", jobs.length);
-    const response = await fetch("http://localhost:8050/api/sync-jobs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(jobs)
-    });
-    const text = await response.text();
-    console.log("API raw response:", text);
-  }
+  if (jobs.length) postJobs(jobs)
 })();
