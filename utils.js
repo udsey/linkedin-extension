@@ -61,3 +61,10 @@ export function onUrlChange(callback) {
         }
     }, 500)
 }
+
+
+export async function getLastSync() {
+  const response = await fetch("http://localhost:8050/api/last-sync");
+  const data = await response.json();
+  return data.last_sync; // expects {"last_sync": "2026-05-22"}
+}
