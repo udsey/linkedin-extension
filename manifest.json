@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Job Tracker",
   "version": "1.0",
 "content_scripts": [
@@ -16,7 +16,5 @@
     "js": ["sync_apply.js", "match_job.js"]
   }
 ],
-"background": { "service_worker": "background.js", "type": "module" },
-"permissions": ["activeTab", "tabs", "alarms"],
-"host_permissions": ["http://localhost:8050/*", "*://*/*"]
-}
+  "background": { "scripts": ["background.js"] },
+"permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*", "*://*/*"]}
