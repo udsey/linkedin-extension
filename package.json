@@ -4,7 +4,7 @@
   "description": "",
   "main": "background.js",
 "scripts": {
-    "build": "esbuild sync_apply.js match_job.js sync_applied.js background.js --bundle --outdir=dist"
+    "build": "esbuild *.js --bundle --outdir=dist"
 },
   "repository": {
     "type": "git",

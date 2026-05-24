@@ -17,4 +17,17 @@
       });
     }
   });
+  browser.contextMenus.create({
+    id: "autofill",
+    title: "Suggest fill",
+    contexts: ["selection"]
+  });
+  browser.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "autofill") {
+      browser.tabs.sendMessage(tab.id, {
+        action: "autofill",
+        selection: info.selectionText
+      });
+    }
+  });
 })();

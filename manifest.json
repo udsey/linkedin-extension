@@ -1,16 +1,16 @@
 {
   "manifest_version": 2,
-  "browser_specific_settings": {
-    "gecko": {
-        "id": "jobtracker@yourdomain.com"
-    }
-},
-  "name": "Job Tracker",
+  "name": "Job Tracker Dev",
   "version": "1.0",
   "icons": {
     "48": "icons/icon48.png",
     "96": "icons/icon96.png"
   },
+  "browser_specific_settings": {
+    "gecko": {
+        "id": "jobtracker@yourdomain.com"
+    }
+},
   "content_scripts": [
     {
       "matches": ["https://www.linkedin.com/jobs-tracker/*"],
@@ -23,8 +23,18 @@
         "https://www.linkedin.com/jobs/view/*"
       ],
       "js": ["dist/sync_apply.js", "dist/match_job.js"]
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/autofill.js"]
     }
   ],
   "background": { "scripts": ["dist/background.js"] },
-  "permissions": ["activeTab", "tabs", "alarms", "http://localhost:8050/*", "*://*/*"]
+  "permissions": ["activeTab",
+                  "contextMenus",
+                  "tabs",
+                  "alarms",
+                  "http://localhost:8050/*",
+                  "*://*/*"
+                  ]
 }
