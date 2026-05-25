@@ -28,22 +28,32 @@
       showRememberDialog(message.selection);
     }
   });
+  async function postRemember(category, content) {
+    const response = await fetch("http://localhost:8050/api/remember", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ category, content })
+    });
+    const text = await response.text();
+    console.log(`API raw response: ${text}`);
+    return response.status;
+  }
   function showRememberDialog(selection) {
     document.getElementById("remember-dialog")?.remove();
     const dialog = document.createElement("div");
-    dialog.id = "remember-dialog";
+    dialog.id = "autofill-dialog";
     dialog.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
     width: 300px;
-    background: #060606;
+    background: #2b2b2b;
     border: 1px solid #9933cc;
     color: #adafae;
     border-radius: 8px;
-    padding: 16px;
+    padding: 16px 16px 20px 16px;
     z-index: 99999;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px  #9933cc;
     font-family: sans-serif;
     font-size: 14px;
   `;
@@ -125,7 +135,7 @@
         el.style.border = "1px solid #9933cc";
       }, 2e3);
     }
-    saveBtn.addEventListener("click", () => {
+    saveBtn.addEventListener("click", async () => {
       if (!category.value.trim()) {
         flashBorder(category);
         return;
@@ -134,12 +144,19 @@
         flashBorder(textarea);
         return;
       }
-      const payload = {
-        category: category.value.trim(),
-        content: textarea.value.trim()
-      };
-      console.log("remember payload:", payload);
-      dialog.remove();
+      const status = await postRemember(category.value.trim(), textarea.value.trim());
+      if (status === 200) {
+        saveBtn.textContent = "Saved \u2713";
+        saveBtn.style.background = "#1a6632";
+        setTimeout(() => dialog.remove(), 1e3);
+      } else {
+        saveBtn.textContent = "Failed \u2717";
+        saveBtn.style.background = "#661a1a";
+        setTimeout(() => {
+          saveBtn.textContent = "Save";
+          saveBtn.style.background = "#4d1a66";
+        }, 2e3);
+      }
     });
     dialog.appendChild(header);
     dialog.appendChild(category);

@@ -66,7 +66,7 @@
   async function getLastSync() {
     const response = await fetch("http://localhost:8050/api/last-sync");
     const data = await response.json();
-    return data.last_sync;
+    return data.payload.last_sync;
   }
   function makeMovable(el, handleId) {
     let isDragging = false, startX, startY, origX, origY;

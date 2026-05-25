@@ -6,23 +6,34 @@ browser.runtime.onMessage.addListener((message) => {
   }
 });
 
+async function postRemember(category, content) {
+  const response = await fetch("http://localhost:8050/api/remember", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ category, content })
+  });
+  const text = await response.text();
+  console.log(`API raw response: ${text}`);
+  return response.status;
+}
+
 function showRememberDialog(selection) {
   document.getElementById("remember-dialog")?.remove();
 
   const dialog = document.createElement("div");
-  dialog.id = "remember-dialog";
-  dialog.style.cssText = `
+  dialog.id = "autofill-dialog";
+dialog.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
     width: 300px;
-    background: #060606;
+    background: #2b2b2b;
     border: 1px solid #9933cc;
     color: #adafae;
     border-radius: 8px;
-    padding: 16px;
+    padding: 16px 16px 20px 16px;
     z-index: 99999;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px  #9933cc;
     font-family: sans-serif;
     font-size: 14px;
   `;
@@ -112,22 +123,23 @@ function flashBorder(el) {
   }, 2000);
 }
 
-saveBtn.addEventListener("click", () => {
-  if (!category.value.trim()) {
-    flashBorder(category);
-    return;
+saveBtn.addEventListener("click", async () => {
+  if (!category.value.trim()) { flashBorder(category); return; }
+  if (!textarea.value.trim()) { flashBorder(textarea); return; }
+
+  const status = await postRemember(category.value.trim(), textarea.value.trim());
+  if (status === 200) {
+    saveBtn.textContent = "Saved ✓";
+    saveBtn.style.background = "#1a6632";
+    setTimeout(() => dialog.remove(), 1000);
+  } else {
+    saveBtn.textContent = "Failed ✗";
+    saveBtn.style.background = "#661a1a";
+    setTimeout(() => {
+      saveBtn.textContent = "Save";
+      saveBtn.style.background = "#4d1a66";
+    }, 2000);
   }
-  if (!textarea.value.trim()) {
-    flashBorder(textarea);
-    return;
-  }
-  const payload = {
-    category: category.value.trim(),
-    content: textarea.value.trim()
-  };
-  console.log("remember payload:", payload);
-  // TODO: POST to API
-  dialog.remove();
 });
 
   dialog.appendChild(header);
