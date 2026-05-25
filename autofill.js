@@ -24,29 +24,29 @@ function showDialog(selection) {
 
   const dialog = document.createElement("div");
   dialog.id = "autofill-dialog";
-dialog.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    background: #2b2b2b;
-    border: 1px solid #9933cc;
-    color: #adafae;
-    border-radius: 8px;
-    padding: 16px 16px 20px 16px;
-    z-index: 99999;
-    box-shadow: 0 4px 12px  #9933cc;
-    font-family: sans-serif;
-    font-size: 14px;
-  `;
+  dialog.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      background: #2b2b2b;
+      border: 1px solid #9933cc;
+      color: #adafae;
+      border-radius: 8px;
+      padding: 16px 16px 20px 16px;
+      z-index: 99999;
+      box-shadow: 0 4px 12px  #9933cc;
+      font-family: sans-serif;
+      font-size: 14px;
+    `;
 
   const header = document.createElement("div");
-header.style.cssText = `
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-`;
+  header.style.cssText = `
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  `;
 
   const target = document.createElement("div");
   target.style.cssText = `
@@ -78,13 +78,15 @@ header.style.cssText = `
   const result = document.createElement("div");
   result.id = "autofill-result";
   result.style.cssText = `
-    min-height: 40px;
+    height: 100px;
     background-color: #2b2b2b;
     border: 1px solid #9933cc;
     padding: 20px;
     color: #adafae;
     border-radius: 0.375rem;
     font-size: 14px;
+    box-sizing: border-box;
+    resize: vertical;
   `;
   result.textContent = "Loading...";
 

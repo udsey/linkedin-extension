@@ -22,21 +22,21 @@ function showRememberDialog(selection) {
 
   const dialog = document.createElement("div");
   dialog.id = "autofill-dialog";
-dialog.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    background: #2b2b2b;
-    border: 1px solid #9933cc;
-    color: #adafae;
-    border-radius: 8px;
-    padding: 16px 16px 20px 16px;
-    z-index: 99999;
-    box-shadow: 0 4px 12px  #9933cc;
-    font-family: sans-serif;
-    font-size: 14px;
-  `;
+  dialog.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      background: #2b2b2b;
+      border: 1px solid #9933cc;
+      color: #adafae;
+      border-radius: 8px;
+      padding: 16px 16px 20px 16px;
+      z-index: 99999;
+      box-shadow: 0 4px 12px  #9933cc;
+      font-family: sans-serif;
+      font-size: 14px;
+    `;
 
   const header = document.createElement("div");
   header.style.cssText = `

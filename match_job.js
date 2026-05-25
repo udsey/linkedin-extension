@@ -32,10 +32,10 @@ function renderPanel(content) {
         return;
     }
     panel.innerHTML = `
-        <h3 style="margin-bottom:0.8rem">Match Score: ${content.relevance_score}%</h3>
-        <p style="margin-bottom:0.8rem">📋 ${content.job_summary}</p>
-        <p style="margin-bottom:0.8rem">✅ <b>Matching:</b> ${content.matching_skills.join(", ")}</p>
-        <p style="margin-bottom:0.8rem">🚫 <b>Missing:</b> ${content.missing_requirements.join(", ")}</p>
+        <h3 style="margin-bottom:0.8rem">Match Score: ${content.payload.relevance_score}%</h3>
+        <p style="margin-bottom:0.8rem">📋 ${content.payload.job_summary}</p>
+        <p style="margin-bottom:0.8rem">✅ <b>Matching:</b> ${content.payload.matching_skills.join(", ")}</p>
+        <p style="margin-bottom:0.8rem">🚫 <b>Missing:</b> ${content.payload.missing_requirements.join(", ")}</p>
     `;
     document.querySelector("#job-details").prepend(panel);
 }
@@ -81,7 +81,6 @@ async function init() {
     matchBtn.addEventListener("click", showMatch);
     btn.parentElement.appendChild(matchBtn);
 }
-
 
 onUrlChange(init);
 init();

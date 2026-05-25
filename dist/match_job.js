@@ -58,10 +58,10 @@
       return;
     }
     panel.innerHTML = `
-        <h3 style="margin-bottom:0.8rem">Match Score: ${content.relevance_score}%</h3>
-        <p style="margin-bottom:0.8rem">\u{1F4CB} ${content.job_summary}</p>
-        <p style="margin-bottom:0.8rem">\u2705 <b>Matching:</b> ${content.matching_skills.join(", ")}</p>
-        <p style="margin-bottom:0.8rem">\u{1F6AB} <b>Missing:</b> ${content.missing_requirements.join(", ")}</p>
+        <h3 style="margin-bottom:0.8rem">Match Score: ${content.payload.relevance_score}%</h3>
+        <p style="margin-bottom:0.8rem">\u{1F4CB} ${content.payload.job_summary}</p>
+        <p style="margin-bottom:0.8rem">\u2705 <b>Matching:</b> ${content.payload.matching_skills.join(", ")}</p>
+        <p style="margin-bottom:0.8rem">\u{1F6AB} <b>Missing:</b> ${content.payload.missing_requirements.join(", ")}</p>
     `;
     document.querySelector("#job-details").prepend(panel);
   }
