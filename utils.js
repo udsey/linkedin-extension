@@ -67,5 +67,31 @@ export function onUrlChange(callback) {
 export async function getLastSync() {
   const response = await fetch("http://localhost:8050/api/last-sync");
   const data = await response.json();
-  return data.last_sync; // expects {"last_sync": "2026-05-22"}
+  return data.payload.last_sync;
+}
+
+
+export function makeMovable(el, handleId) {
+  let isDragging = false, startX, startY, origX, origY;
+
+  el.querySelector(`#${handleId}`).addEventListener("mousedown", (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    origX = el.offsetLeft;
+    origY = el.offsetTop;
+    el.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    el.style.left = origX + (e.clientX - startX) + "px";
+    el.style.top = origY + (e.clientY - startY) + "px";
+    el.style.right = "auto";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    el.style.cursor = "default";
+  });
 }

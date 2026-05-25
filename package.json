@@ -4,7 +4,10 @@
   "description": "",
   "main": "background.js",
 "scripts": {
-    "build": "esbuild sync_apply.js match_job.js sync_applied.js background.js --bundle --outdir=dist"
+    "build": "esbuild *.js --bundle --outdir=dist",
+    "bundle": "zip -r job-tracker.xpi manifest.json dist/ icons/",
+    "prebundle": "npm run build",
+    "dev": "esbuild *.js --bundle --outdir=dist --watch"
 },
   "repository": {
     "type": "git",
